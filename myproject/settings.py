@@ -39,9 +39,14 @@ SECRET_KEY = financials_PRD_secret_key
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = os.environ.get('Allowed_Hosts')[0]
-print(ALLOWED_HOSTS)
+# Fetch the environment variable
+allowed_hosts_str = os.environ.get('Allowed_Hosts', '')
 
+# Split the string by comma if it's not empty, otherwise default to an empty list
+ALLOWED_HOSTS = allowed_hosts_str.split(',') if allowed_hosts_str else []
+
+# For debugging, print the ALLOWED_HOSTS
+print("ALLOWED_HOSTS:", ALLOWED_HOSTS)
 
 # Application definition
 
