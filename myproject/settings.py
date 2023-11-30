@@ -86,7 +86,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'myproject.wsgi.application'
-
+#gunicorn --bind 0.0.0.0:8000 
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
