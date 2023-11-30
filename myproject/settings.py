@@ -39,7 +39,7 @@ SECRET_KEY = financials_PRD_secret_key
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = os.environ.get('Allowed_Hosts')
+ALLOWED_HOSTS = os.environ.get('Allowed_Hosts')[0]
 print(ALLOWED_HOSTS)
 
 
