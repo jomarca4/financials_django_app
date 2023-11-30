@@ -40,7 +40,7 @@ SECRET_KEY = financials_PRD_secret_key
 DEBUG = False
 
 ALLOWED_HOSTS = os.environ.get('Allowed_Hosts')
-
+print(ALLOWED_HOSTS)
 
 
 # Application definition
