@@ -37,7 +37,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = financials_PRD_secret_key
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = os.environ.get('Allowed_Hosts')
 
@@ -112,7 +112,7 @@ DATABASES = {
 }
 
 # Set to True to use production database
-USE_PRODUCTION_DB = False  
+USE_PRODUCTION_DB = True  
 
 if USE_PRODUCTION_DB:
     DATABASES['default'] = DATABASES['production']
