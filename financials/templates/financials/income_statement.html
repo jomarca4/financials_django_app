@@ -1,0 +1,52 @@
+{% extends 'financials/base.html' %}
+
+{% load financial_filters %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Income Statement</title>
+</head>
+<body>
+    {% block content %}
+
+    <div class="container mt-4">
+        <h2 class="text-center mb-4">Income Statement for {{ company.ticker_symbol }}</h2>
+        {% if quarters_data %}
+            <table class="table table-bordered table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Account Label</th>
+                        {% for quarter in quarters_data %}
+                            <th>Value {{ quarter.year }} Q{{ quarter.quarter_number }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entry in quarters_data.0.items %}
+                        <tr>
+                            <td>{{ entry.mapped_label }}</td>
+                            {% for quarter in quarters_data %}
+                                <td>
+                                    {% for item in quarter.items %}
+                                        {% if item.item.account_label == entry.item.account_label %}
+                                            {{ item.item.value|millions_format }}
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="text-center">No income statement data available.</p>
+        {% endif %}
+    </div>
+
+    {% endblock %}
+
+</body>

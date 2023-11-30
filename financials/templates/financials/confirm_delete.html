@@ -1,0 +1,27 @@
+{% extends 'financials/base.html' %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Delete Confirmation</title>
+</head>
+<body>
+    {% block content %}
+
+    <div class="container mt-4">
+        <h2>Delete Confirmation</h2>
+        <p>Are you sure you want to delete the stock record for "{{ stock.company.ticker_symbol }}"?</p>
+        
+        <form action="{% url 'delete_watched_stock' stock.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Confirm</button>
+            <a href="{% url 'watched_stocks_list' %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+
+
+    {% endblock %}
+
+</body>
+</html>

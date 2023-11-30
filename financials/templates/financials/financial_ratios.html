@@ -1,0 +1,35 @@
+{% extends 'financials/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Financial Ratios</h1>
+    <form method="get" class="mb-4">
+        <div class="form-group">
+            <label for="company_id">Select Company:</label>
+            <select name="company_id" id="company_id" class="form-control">
+                {% for company in companies %}
+                    <option value="{{ company.id }}">{{ company.ticker_symbol }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Show Ratios</button>
+    </form>
+
+    {% if ratios %}
+        <h2 class="mb-3">Ratios: for {{ company.id }}</h2>
+        <div class="list-group">
+            {% for ratio in ratios %}
+                <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">{{ ratio.ratio_name }}</h5>
+                        <small>Year: {{ ratio.quarter.year }}, Q{{ ratio.quarter.quarter_number }}</small>
+                    </div>
+                    <p class="mb-1">Value: {{ ratio.ratio_value|floatformat:2 }}%</p>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="alert alert-info">Select a company to view its financial ratios.</p>
+    {% endif %}
+</div>
+{% endblock %}
