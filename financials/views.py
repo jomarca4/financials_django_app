@@ -5,6 +5,7 @@ from django.db.models import Max
 
 from collections import defaultdict
 from itertools import groupby
+from operator import attrgetter
 # Create your views here.
 from .models import financial_ratios, financial_statement_items, quarters, WatchedStock, companies, FinancialStatementLabel,financial_statements
 from .forms import WatchedStockForm  # Make sure this import is correct
@@ -13,13 +14,6 @@ def home(request):
     # You can add any context data you want to pass to the template here
     return render(request, 'financials/home.html')
 
-def financial_statement_view(request):
-    items = financial_statement_items.objects.filter(
-        account_label__contains='Revenue',
-        financial_statement__quarter__year=2022,
-        financial_statement__quarter__company__ticker_symbol='AAPL'
-    )
-    return render(request, 'financials/financial_statement.html', {'items': items})
 
 
 def income_statement_view(request, ticker_symbol):
@@ -112,19 +106,36 @@ def delete_watched_stock(request, pk):
     # ...
 
 
-from collections import defaultdict
-from itertools import groupby
-
 def financial_ratios_view(request):
     company_id = request.GET.get('company_id')
     ratios = None
     company_list = companies.objects.all().order_by('ticker_symbol')  # Fetch all companies
 
     if company_id:
-        ratios = financial_ratios.objects.filter(quarter__company_id=company_id).select_related('quarter').order_by('quarter__year', 'quarter__quarter_number')
-    
-    context = {
-        'companies': company_list,
-        'ratios': ratios
-    }
+        # Fetch ratios and sort them by name and then by quarter
+        ratios = financial_ratios.objects.filter(quarter__company_id=company_id).select_related('quarter').order_by('ratio_name', 'quarter__year', 'quarter__quarter_number')
+
+        # Get unique quarters
+        unique_quarters = sorted(set((ratio.quarter.year, ratio.quarter.quarter_number) for ratio in ratios), reverse=True)
+
+        # Initialize the structure for template data
+        ratios_for_template = defaultdict(lambda: ['N/A'] * len(unique_quarters))
+
+        # Fill the structure with data
+        for ratio in ratios:
+            quarter_index = unique_quarters.index((ratio.quarter.year, ratio.quarter.quarter_number))
+            ratios_for_template[ratio.ratio_name][quarter_index] = ratio.ratio_value
+
+        context = {
+            'companies': company_list,
+            'ratios_grouped': dict(ratios_for_template),
+            'unique_quarters': unique_quarters
+        }
+    else:
+        context = {
+            'companies': company_list,
+            'ratios_grouped': None,
+            'unique_quarters': None
+        }
+
     return render(request, 'financials/financial_ratios.html', context)

@@ -8,28 +8,37 @@
             <label for="company_id">Select Company:</label>
             <select name="company_id" id="company_id" class="form-control">
                 {% for company in companies %}
-                    <option value="{{ company.id }}">{{ company.ticker_symbol }}</option>
+                    <option value="{{ company.id }}" {% if company.id|stringformat:"s" == request.GET.company_id %}selected{% endif %}>{{ company.ticker_symbol }}</option>
                 {% endfor %}
             </select>
         </div>
         <button type="submit" class="btn btn-primary">Show Ratios</button>
     </form>
 
-    {% if ratios %}
-        <h2 class="mb-3">Ratios: for {{ company.id }}</h2>
-        <div class="list-group">
-            {% for ratio in ratios %}
-                <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-                    <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1">{{ ratio.ratio_name }}</h5>
-                        <small>Year: {{ ratio.quarter.year }}, Q{{ ratio.quarter.quarter_number }}</small>
-                    </div>
-                    <p class="mb-1">Value: {{ ratio.ratio_value|floatformat:2 }}%</p>
-                </a>
+    {% if ratios_grouped %}
+    <h2 class="mb-3">Ratios</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Ratio</th>
+                {% for year, quarter in unique_quarters %}
+                    <th>{{ year }} Q{{ quarter }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for ratio_name, values in ratios_grouped.items %}
+                <tr>
+                    <td>{{ ratio_name }}</td>
+                    {% for value in values %}
+                        <td>{{ value|floatformat:"2" }}%</td>
+                    {% endfor %}
+                </tr>
             {% endfor %}
-        </div>
-    {% else %}
-        <p class="alert alert-info">Select a company to view its financial ratios.</p>
-    {% endif %}
+        </tbody>
+    </table>
+{% else %}
+    <p class="alert alert-info">Select a company to view its financial ratios.</p>
+{% endif %}
 </div>
 {% endblock %}

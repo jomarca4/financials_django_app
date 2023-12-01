@@ -1,10 +1,9 @@
 from django.urls import path
 from django.contrib.auth.views import LoginView, LogoutView
 
-from .views import home,financial_ratios_view,financial_statement_view, income_statement_view,add_watched_stock, watched_stocks_list, edit_watched_stock,delete_watched_stock,delete_watched_stock
+from .views import home,financial_ratios_view, income_statement_view,add_watched_stock, watched_stocks_list, edit_watched_stock,delete_watched_stock,delete_watched_stock
 
 urlpatterns = [
-    path('financial-statement/', financial_statement_view, name='financial-statement'),
     path('income-statement/<str:ticker_symbol>/', income_statement_view, name='income-statement'),
     path('add-watched-stock/', add_watched_stock, name='add_watched_stock'),
     path('watched-stocks/', watched_stocks_list, name='watched_stocks_list'),
