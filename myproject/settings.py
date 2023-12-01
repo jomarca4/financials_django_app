@@ -47,9 +47,10 @@ DEBUG = False
 
 # Split the string by comma if it's not empty, otherwise default to an empty list
 #ALLOWED_HOSTS = allowed_hosts_str.split(',') if allowed_hosts_str else []
-ALLOWED_HOSTS = os.getenv('Allowed_Hosts', '').split(',') if os.getenv('Allowed_Hosts') else []
-print(ALLOWED_HOSTS)
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = os.getenv('Allowed_Hosts', '').split(',')
+
+#print(ALLOWED_HOSTS)
+#ALLOWED_HOSTS = ['*']
 # For debugging, print the ALLOWED_HOSTS
 
 # Application definition
