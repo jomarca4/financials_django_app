@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 import os
 
+from dotenv import load_dotenv
+load_dotenv()  # Load environment variables from a .env file
+
 #retrieve DB variables
 db_name = os.environ.get('DB_NAME')
 db_user = os.environ.get('DB_USER')
