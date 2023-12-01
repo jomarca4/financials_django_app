@@ -41,7 +41,7 @@ SECRET_KEY = financials_PRD_secret_key
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG')
-print(DEBUG)
+#print(DEBUG)
 # Fetch the environment variable
 #allowed_hosts_str = os.environ.get('Allowed_Hosts', '')
 
@@ -122,7 +122,7 @@ DATABASES = {
 }
 
 # Set to True to use production database
-USE_PRODUCTION_DB = True  
+USE_PRODUCTION_DB = os.environ.get('USE_PRODUCTION_DB') 
 
 if USE_PRODUCTION_DB:
     DATABASES['default'] = DATABASES['production']
