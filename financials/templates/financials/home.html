@@ -1,0 +1,26 @@
+{% extends 'financials/base.html' %}
+{% load static %}
+{% block content %}
+<div class="container">
+  <div class="jumbotron mt-5">
+    <h1 class="display-4">Welcome to Financial and Python Hub!</h1>
+    <p class="lead">Your one-stop destination for financial insights and Python analysis.</p>
+    <hr class="my-4">
+    <p>Explore financial statements, track stocks, and much more.</p>
+    <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+  </div>
+
+  <!-- Add more sections as needed -->
+  <div class="row">
+    <div class="col-md-6">
+        <img src="{% static 'financials/images/pythonandfinancehub.png' %}" class="img-fluid" alt="Description of image">
+    </div>
+    <div class="col-md-6">
+      <h2>Financial Analysis</h2>
+      <p>Deep dive into financial statements and ratios to make informed decisions.</p>
+      <!-- Link to your financial analysis page -->
+      <a href="{% url 'financial-statement' %}" class="btn btn-secondary">View Financial Statements</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

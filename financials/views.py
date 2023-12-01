@@ -8,6 +8,10 @@ from django.db.models import Max
 from .models import financial_ratios, financial_statement_items, quarters, WatchedStock, companies, FinancialStatementLabel,financial_statements
 from .forms import WatchedStockForm  # Make sure this import is correct
 
+def home(request):
+    # You can add any context data you want to pass to the template here
+    return render(request, 'financials/home.html')
+
 def financial_statement_view(request):
     items = financial_statement_items.objects.filter(
         account_label__contains='Revenue',

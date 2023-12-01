@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import financial_ratios_view,financial_statement_view, income_statement_view,add_watched_stock, watched_stocks_list, edit_watched_stock,delete_watched_stock,delete_watched_stock
+from .views import home,financial_ratios_view,financial_statement_view, income_statement_view,add_watched_stock, watched_stocks_list, edit_watched_stock,delete_watched_stock,delete_watched_stock
 
 urlpatterns = [
     path('financial-statement/', financial_statement_view, name='financial-statement'),
@@ -10,6 +10,7 @@ urlpatterns = [
     path('delete-watched-stock/<int:pk>/', delete_watched_stock, name='delete_watched_stock'),
     path('delete-watched-stock/<int:stock_id>/', delete_watched_stock, name='delete_watched_stock'),
     path('financial-ratios/', financial_ratios_view, name='financial_ratios'),
+    path('', home, name='home'),  # Set this as the root URL
 
 
 ]
