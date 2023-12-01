@@ -40,8 +40,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = financials_PRD_secret_key
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-
+DEBUG = os.environ.get('DEBUG')
+print(DEBUG)
 # Fetch the environment variable
 #allowed_hosts_str = os.environ.get('Allowed_Hosts', '')
 
