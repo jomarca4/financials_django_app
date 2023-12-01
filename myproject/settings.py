@@ -49,6 +49,7 @@ DEBUG = False
 #ALLOWED_HOSTS = allowed_hosts_str.split(',') if allowed_hosts_str else []
 ALLOWED_HOSTS = os.getenv('Allowed_Hosts', '').split(',') if os.getenv('Allowed_Hosts') else []
 print(ALLOWED_HOSTS)
+ALLOWED_HOSTS = ['*']
 # For debugging, print the ALLOWED_HOSTS
 
 # Application definition
