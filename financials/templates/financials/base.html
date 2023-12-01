@@ -31,6 +31,21 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'financial_ratios' %}">Financial Ratios</a>
                 </li>
+                           <!-- Login Button (only if user is not logged in) -->
+            {% if not user.is_authenticated %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'login' %}">Login</a>
+            </li>
+            {% endif %}
+                <!-- Logout Button -->
+            {% if user.is_authenticated %}
+            <li class="nav-item">
+                <form method="post" action="{% url 'logout' %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-link nav-link">Logout</button>
+                </form>
+            </li>
+            {% endif %}
             </ul>
         </div>
     </nav>

@@ -3,7 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.db import models  # Import models
 from django.db.models import Max
 
-
+from collections import defaultdict
+from itertools import groupby
 # Create your views here.
 from .models import financial_ratios, financial_statement_items, quarters, WatchedStock, companies, FinancialStatementLabel,financial_statements
 from .forms import WatchedStockForm  # Make sure this import is correct
@@ -29,7 +30,7 @@ def income_statement_view(request, ticker_symbol):
         latest_three_quarters = quarters.objects.filter(
             company=company,
             financial_statements__type='income_statement'
-        ).order_by('-year', '-quarter_number').distinct()[:5]
+        ).order_by('-year', '-quarter_number').distinct()[:9]
 
         context = {'company': company, 'quarters_data': []}
 
@@ -110,6 +111,9 @@ def delete_watched_stock(request, pk):
     # Render a confirmation page or handle the deletion directly
     # ...
 
+
+from collections import defaultdict
+from itertools import groupby
 
 def financial_ratios_view(request):
     company_id = request.GET.get('company_id')
