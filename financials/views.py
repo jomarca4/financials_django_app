@@ -1,14 +1,23 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.db import models  # Import models
-from django.db.models import Max
+from django.db.models import Max, Subquery, OuterRef
+from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic.edit import CreateView
+from django.urls import reverse_lazy
+
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponseForbidden
 
 from collections import defaultdict
 from itertools import groupby
 from operator import attrgetter
 # Create your views here.
-from .models import financial_ratios, financial_statement_items, quarters, WatchedStock, companies, FinancialStatementLabel,financial_statements
-from .forms import WatchedStockForm  # Make sure this import is correct
+from .models import market_data,Portfolio, AssetHolding,financial_ratios, financial_statement_items, quarters, WatchedStock, companies, FinancialStatementLabel,financial_statements
+from .forms import WatchedStockForm, AssetHoldingForm  
+from django.db.models import Sum, F, Value
+from django.db.models.functions import Coalesce
+from decimal import Decimal
 
 def home(request):
     # You can add any context data you want to pass to the template here
@@ -139,3 +148,97 @@ def financial_ratios_view(request):
         }
 
     return render(request, 'financials/financial_ratios.html', context)
+
+
+class PortfolioListView(LoginRequiredMixin,ListView):
+    model = Portfolio
+    template_name = 'financials/portfolio_list.html'
+
+class PortfolioDetailView(LoginRequiredMixin, DetailView):
+    model = Portfolio
+    template_name = 'financials/portfolio_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        portfolio = self.object
+
+        # First, get the most recent date for each asset holding's market data
+        recent_dates = market_data.objects.filter(
+            assetholding__portfolio=portfolio
+        ).values('assetholding').annotate(
+            recent_date=Max('date')
+        ).values_list('assetholding', 'recent_date')
+
+        # Create a dict mapping each holding to its most recent date
+        recent_date_map = {holding_id: date for holding_id, date in recent_dates}
+
+        # Initialize variables
+        total_stocks = market_value = total_purchase_price = 0
+        market_value = Decimal(0)
+        total_purchase_price = Decimal(0)
+        # Now, fetch the asset holdings and their most recent market data
+        asset_holdings = AssetHolding.objects.filter(portfolio=portfolio)
+        for holding in asset_holdings:
+            recent_date = recent_date_map.get(holding.pk)
+            recent_market_data = market_data.objects.filter(
+                assetholding=holding, date=recent_date
+            ).first()
+            recent_close = recent_market_data.close_price if recent_market_data else 0
+
+            # Update calculations
+            market_value += recent_close * holding.quantity
+            total_purchase_price += Decimal(holding.purchase_price) * Decimal(holding.quantity)
+            total_stocks += holding.quantity
+
+        # Calculate gain/loss and percentage
+        gain_loss = market_value - total_purchase_price
+        percentage_gain_loss = (gain_loss / total_purchase_price) * 100 if total_purchase_price else 0
+
+        context.update({
+            'total_stocks': total_stocks,
+            'market_value': market_value,
+            'gain_loss': gain_loss,
+            'percentage_gain_loss': percentage_gain_loss,
+        })
+
+        return context
+
+class PortfolioCreateView(LoginRequiredMixin,CreateView):
+    model = Portfolio
+    fields = ['name', 'total_value']
+    template_name = 'financials/portfolio_form.html'
+    success_url = 'financials/portfolios/'  # Redirect to portfolio list after creation
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user  # Assuming portfolios are user-specific
+        return super().form_valid(form)
+
+
+class AssetHoldingCreateView(LoginRequiredMixin, CreateView):
+    model = AssetHolding
+    form_class = AssetHoldingForm
+    template_name = 'financials/asset_holding_form.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.portfolio = get_object_or_404(Portfolio, pk=self.kwargs['portfolio_id'], user=request.user)
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        # Get the ticker symbol from the form
+        ticker_symbol = form.cleaned_data['ticker_symbol']
+
+        # Find or create the market_data entry
+        # Assuming 'companies' model has the 'ticker_symbol' field
+        company = companies.objects.get(ticker_symbol=ticker_symbol)
+        market_data_entry = market_data.objects.filter(company=company).latest('date')
+
+        # Create the AssetHolding instance
+        asset_holding = form.save(commit=False)
+        asset_holding.market_data = market_data_entry
+        asset_holding.portfolio = self.portfolio
+        asset_holding.save()
+
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('portfolio_detail', kwargs={'pk': self.portfolio.pk})

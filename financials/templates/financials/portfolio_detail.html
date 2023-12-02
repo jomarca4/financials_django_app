@@ -1,0 +1,29 @@
+{% extends 'financials/base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2>Portfolio Details</h2>
+
+    <!-- Display Portfolio Information -->
+    <p><strong>Total Stocks:</strong> {{ total_stocks }}</p>
+    <p><strong>Market Value:</strong> ${{ market_value|floatformat:2 }}</p>
+
+    <!-- Gain/Loss with dynamic color based on value -->
+    <p>
+        <strong>Gain/Loss:</strong>
+        <span class="{% if gain_loss >= 0 %}text-success{% else %}text-danger{% endif %}">
+            ${{ gain_loss|floatformat:2 }}
+        </span>
+    </p>
+
+    <!-- Percentage Gain/Loss -->
+    <p>
+        <strong>Percentage Gain/Loss:</strong>
+        <span class="{% if percentage_gain_loss >= 0 %}text-success{% else %}text-danger{% endif %}">
+            {{ percentage_gain_loss|floatformat:2 }}%
+        </span>
+    </p>
+    <a href="{% url 'add-holding' portfolio_id=portfolio.id %}" class="btn btn-primary">Add New Holding</a>
+
+</div>
+{% endblock %}

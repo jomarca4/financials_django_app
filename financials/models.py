@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+from django.utils import timezone
 # Create your models here.
 
 class companies(models.Model):
@@ -65,13 +66,14 @@ class financial_ratios(models.Model):
 
 class market_data(models.Model):
     company = models.ForeignKey(companies, on_delete=models.CASCADE)
-    date = models.DateField()
+    date = models.DateField(db_index=True)
     open_price = models.DecimalField(max_digits=19, decimal_places=4, null=True, blank=True)
     close_price = models.DecimalField(max_digits=19, decimal_places=4, null=True, blank=True)
     high_price = models.DecimalField(max_digits=19, decimal_places=4, null=True, blank=True)
     low_price = models.DecimalField(max_digits=19, decimal_places=4, null=True, blank=True)
     volume = models.BigIntegerField(null=True, blank=True)
     market_cap = models.DecimalField(max_digits=19, decimal_places=4, null=True, blank=True)
+    dividend_amount = models.DecimalField(max_digits=19, decimal_places=4, null=True, blank=True)
 
     class Meta:
         unique_together = ('company', 'date')
@@ -110,3 +112,33 @@ class WatchedStock(models.Model):
 
     class Meta:
         db_table = 'watched_stocks'
+
+
+
+class Portfolio(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)
+    total_value = models.FloatField(default=0)
+    creation_date = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        db_table = 'portfolio'
+        indexes = [
+            models.Index(fields=['user'], name='idx_portfolio_user'),
+        ]
+
+class AssetHolding(models.Model):
+    portfolio = models.ForeignKey(Portfolio, on_delete=models.CASCADE)
+    market_data = models.ForeignKey(market_data, on_delete=models.CASCADE)
+    quantity = models.IntegerField()
+    purchase_price = models.FloatField()
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        db_table = 'asset_holdings'
+        indexes = [
+            models.Index(fields=['portfolio'], name='idx_asset_holdings_portfolio'),
+            models.Index(fields=['market_data'], name='idx_asset_holdings_market_data'),
+        ]

@@ -1,0 +1,13 @@
+{% extends 'financials/base.html' %}
+
+{% block content %}
+<h2>Portfolios</h2>
+<ul class="list-group">
+    {% for portfolio in object_list %}
+        <li class="list-group-item"><a href="{% url 'portfolio_detail' portfolio.id %}">{{ portfolio.name }}</a></li>
+    {% empty %}
+        <li class="list-group-item">No portfolios available.</li>
+    {% endfor %}
+</ul>
+<a href="{% url 'portfolio_new' %}" class="btn btn-primary mt-3">Add New Portfolio</a>
+{% endblock %}
