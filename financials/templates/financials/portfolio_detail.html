@@ -1,29 +1,64 @@
 {% extends 'financials/base.html' %}
 
 {% block content %}
-<div class="container">
+<div class="container-fluid"> <!-- Use container-fluid for full width -->
     <h2>Portfolio Details</h2>
 
     <!-- Display Portfolio Information -->
-    <p><strong>Total Stocks:</strong> {{ total_stocks }}</p>
-    <p><strong>Market Value:</strong> ${{ market_value|floatformat:2 }}</p>
+    <div class="row">
+        <div class="col">
+            <p><strong>Total Stocks:</strong> {{ total_stocks }}</p>
+            <p><strong>Market Value:</strong> ${{ market_value|floatformat:2 }}</p>
+            <p>
+                <strong>Gain/Loss:</strong>
+                <span class="{% if gain_loss >= 0 %}text-success{% else %}text-danger{% endif %}">
+                    ${{ gain_loss|floatformat:2 }}
+                </span>
+            </p>
+            <p>
+                <strong>Percentage Gain/Loss:</strong>
+                <span class="{% if percentage_gain_loss >= 0 %}text-success{% else %}text-danger{% endif %}">
+                    {{ percentage_gain_loss|floatformat:2 }}%
+                </span>
+            </p>
+        </div>
+    </div>
 
-    <!-- Gain/Loss with dynamic color based on value -->
-    <p>
-        <strong>Gain/Loss:</strong>
-        <span class="{% if gain_loss >= 0 %}text-success{% else %}text-danger{% endif %}">
-            ${{ gain_loss|floatformat:2 }}
-        </span>
-    </p>
+    <!-- List of Asset Holdings in small boxes -->
+    <h3>Asset Holdings</h3>
+    <div class="row">
+        {% for holding_info in asset_holdings_with_details %}
+            <div class="col-sm-6 col-md-4 col-lg-3 mb-3"> <!-- Adjust column sizes as needed -->
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Stock: {{ holding_info.stock_name }}</h5>
+                        <p class="card-text">Quantity: {{ holding_info.holding.quantity }}</p>
+                        <p class="card-text">Recent Close Price: ${{ holding_info.recent_close|floatformat:2 }}</p>
+                        <p class="card-text">Total Gain/Loss: 
+                            <span class="{% if holding_info.holding_gain >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                ${{ holding_info.holding_gain|floatformat:2 }}
+                            </span>
+                        </p>
+                        <p class="card-text">YTD Dividend Amount: ${{ holding_info.ytd_dividends|floatformat:2 }}</p>
+                        <p class="card-text">YTD Market Gain:
+                            <span class="{% if holding_info.ytd_market_gain >= 0 %}text-success{% else %}text-danger{% endif %}">
+                            ${{ holding_info.ytd_market_gain|floatformat:2 }}
+                        </span>
+                        </p>
+                        <p class="card-text">YTD Dividend Yield: %{{ holding_info.ytd_dividend_yield|floatformat:2 }}</p>
+                        <p class="card-text">YTD Price Change: 
+                            <span class="{% if holding_info.ytd_percentage_gain >= 0 %}text-success{% else %}text-danger{% endif %}">
+                            %{{ holding_info.ytd_percentage_gain|floatformat:2 }}
+                        </span>
+                        </p>
 
-    <!-- Percentage Gain/Loss -->
-    <p>
-        <strong>Percentage Gain/Loss:</strong>
-        <span class="{% if percentage_gain_loss >= 0 %}text-success{% else %}text-danger{% endif %}">
-            {{ percentage_gain_loss|floatformat:2 }}%
-        </span>
-    </p>
-    <a href="{% url 'add-holding' portfolio_id=portfolio.id %}" class="btn btn-primary">Add New Holding</a>
 
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <a href="{% url 'add-holding' portfolio_id=portfolio.id %}" class="btn btn-primary mt-3">Add New Holding</a>
 </div>
 {% endblock %}

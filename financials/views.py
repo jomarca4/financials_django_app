@@ -18,6 +18,8 @@ from .forms import WatchedStockForm, AssetHoldingForm
 from django.db.models import Sum, F, Value
 from django.db.models.functions import Coalesce
 from decimal import Decimal
+from django.db.models import Sum
+from datetime import datetime               
 
 def home(request):
     # You can add any context data you want to pass to the template here
@@ -162,6 +164,8 @@ class PortfolioDetailView(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         portfolio = self.object
 
+        asset_holdings = AssetHolding.objects.filter(portfolio=portfolio)
+
         # First, get the most recent date for each asset holding's market data
         recent_dates = market_data.objects.filter(
             assetholding__portfolio=portfolio
@@ -173,24 +177,60 @@ class PortfolioDetailView(LoginRequiredMixin, DetailView):
         recent_date_map = {holding_id: date for holding_id, date in recent_dates}
 
         # Initialize variables
-        total_stocks = market_value = total_purchase_price = 0
-        market_value = Decimal(0)
-        total_purchase_price = Decimal(0)
-        # Now, fetch the asset holdings and their most recent market data
-        asset_holdings = AssetHolding.objects.filter(portfolio=portfolio)
+        total_stocks = 0
+        market_value = Decimal('0.0')
+        total_purchase_price = Decimal('0.0')
+        current_year = datetime.now().year
+
+        start_of_year = datetime(current_year, 1, 1)
+        asset_holdings_with_details = []  # List to hold details for each holding
+
         for holding in asset_holdings:
             recent_date = recent_date_map.get(holding.pk)
+                     # Get the most recent market data for this holding
             recent_market_data = market_data.objects.filter(
-                assetholding=holding, date=recent_date
-            ).first()
-            recent_close = recent_market_data.close_price if recent_market_data else 0
+                assetholding=holding
+            ).order_by('-date').first()
+            recent_close = recent_market_data.close_price if recent_market_data else Decimal('0.0')
 
-            # Update calculations
-            market_value += recent_close * holding.quantity
-            total_purchase_price += Decimal(holding.purchase_price) * Decimal(holding.quantity)
+            # Calculate YTD dividend amount
+            ytd_dividends = market_data.objects.filter(
+                company_id  =recent_market_data.company.id, 
+                date__year=current_year
+            ).aggregate(Sum('dividend_amount'))['dividend_amount__sum'] or Decimal('0.0')
+            ytd_dividend_yield = (ytd_dividends / recent_close)*100
+
+            holding_market_value = recent_close * Decimal(holding.quantity)
+            holding_purchase_price = Decimal(holding.purchase_price) * Decimal(holding.quantity)
+            holding_gain = holding_market_value - holding_purchase_price
+
             total_stocks += holding.quantity
+            market_value += holding_market_value
+            total_purchase_price += holding_purchase_price
 
-        # Calculate gain/loss and percentage
+
+      # YTD Market Gain calculations
+            start_of_year_data = market_data.objects.filter(
+                company_id  =recent_market_data.company.id, 
+                date__gte=start_of_year
+            ).order_by('date').first()
+            start_of_year_price = start_of_year_data.close_price if start_of_year_data else Decimal('0.0')
+            ytd_market_gain = (recent_close - start_of_year_price) * Decimal(holding.quantity)
+            ytd_percentage_gain = (recent_close - start_of_year_price)/start_of_year_price
+            # Add stock name and gain to the details for each holding
+            stock_name = recent_market_data.company.name if recent_market_data and recent_market_data.company else "Unknown"
+            asset_holdings_with_details.append({
+                'holding': holding,
+                'recent_close': recent_close,
+                'stock_name': stock_name,
+                'holding_gain': holding_gain,
+                'ytd_dividends': ytd_dividends,
+                'ytd_market_gain': ytd_market_gain,
+                'ytd_dividend_yield':ytd_dividend_yield,
+                'ytd_percentage_gain':ytd_percentage_gain
+
+            })
+
         gain_loss = market_value - total_purchase_price
         percentage_gain_loss = (gain_loss / total_purchase_price) * 100 if total_purchase_price else 0
 
@@ -199,6 +239,7 @@ class PortfolioDetailView(LoginRequiredMixin, DetailView):
             'market_value': market_value,
             'gain_loss': gain_loss,
             'percentage_gain_loss': percentage_gain_loss,
+            'asset_holdings_with_details': asset_holdings_with_details,
         })
 
         return context
