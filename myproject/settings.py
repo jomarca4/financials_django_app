@@ -64,7 +64,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'financials',
     'django_select2',
-    'ckeditor'
+    'ckeditor',
+    'google_analytics',
+
 
 ]
 
@@ -160,6 +162,9 @@ USE_L10N = True
 
 USE_TZ = True
 
+GOOGLE_ANALYTICS = {
+    'PROPERTY_ID': GOOGLE_ANALYTICS_ID  # Replace with your tracking ID
+}
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
