@@ -1,6 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script>
+        // Check if the analytics ID is set
+        {% if GOOGLE_ANALYTICS_ID %}
+            <script async src="https://www.googletagmanager.com/gtag/js?id={{ GOOGLE_ANALYTICS_ID }}"></script>
+            <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', '{{ GOOGLE_ANALYTICS_ID }}');
+            </script>
+{% endif %}
+    </script>
     <meta charset="UTF-8">
     <title>{% block title %}Financials{% endblock title %}</title>
 
