@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from ckeditor.fields import RichTextField
 
 from django.utils import timezone
 # Create your models here.
@@ -142,3 +143,47 @@ class AssetHolding(models.Model):
             models.Index(fields=['portfolio'], name='idx_asset_holdings_portfolio'),
             models.Index(fields=['market_data'], name='idx_asset_holdings_market_data'),
         ]
+
+#BLOG
+
+
+class Section(models.Model):
+    title = models.CharField(max_length=200)
+    parent_section = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='subsections')
+
+    def __str__(self):
+        return self.title
+
+    @property
+    def is_subsection(self):
+        return self.parent_section is not None
+
+class Tag(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+class Post(models.Model):
+    title = models.CharField(max_length=200)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = RichTextField()  # instead of models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    section = models.ForeignKey(Section, on_delete=models.CASCADE, related_name='posts')
+    tags = models.ManyToManyField(Tag, related_name='posts')
+    first_paragraph = models.TextField(help_text="Enter the first paragraph of the post", default="Default text")
+    img_url = models.URLField(max_length=1024, blank=True, null=True, help_text="URL of the image hosted on a third-party service")
+
+
+    def __str__(self):
+        return self.title
+
+class Comment(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Comment by {self.author.username} on {self.post.title}'

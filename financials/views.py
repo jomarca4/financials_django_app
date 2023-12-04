@@ -13,7 +13,7 @@ from collections import defaultdict
 from itertools import groupby
 from operator import attrgetter
 # Create your views here.
-from .models import market_data,Portfolio, AssetHolding,financial_ratios, financial_statement_items, quarters, WatchedStock, companies, FinancialStatementLabel,financial_statements
+from .models import Post, Section,market_data,Portfolio, AssetHolding,financial_ratios, financial_statement_items, quarters, WatchedStock, companies, FinancialStatementLabel,financial_statements
 from .forms import WatchedStockForm, AssetHoldingForm  
 from django.db.models import Sum, F, Value
 from django.db.models.functions import Coalesce
@@ -283,3 +283,17 @@ class AssetHoldingCreateView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self):
         return reverse_lazy('portfolio_detail', kwargs={'pk': self.portfolio.pk})
+
+
+#BLOG
+def post_list(request):
+    posts = Post.objects.all()
+    return render(request, 'financials/post_list.html', {'posts': posts})
+
+def post_detail(request, post_id):
+    post = get_object_or_404(Post, pk=post_id)
+    return render(request, 'financials/post_detail.html', {'post': post})
+
+def section_posts(request, section_id):
+    section = get_object_or_404(Section, pk=section_id)
+    return render(request, 'financials/section_posts.html', {'section': section})

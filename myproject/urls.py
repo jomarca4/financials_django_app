@@ -15,9 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include,path
+from django.views.generic import RedirectView
 
 
 urlpatterns = [
+    path('', RedirectView.as_view(url='financials/blog/'), name='home'),  # Redirect root to blog
     path('admin/', admin.site.urls),
     path('financials/', include('financials.urls')),  # Adjust the path as needed
     path('select2/', include('django_select2.urls')),

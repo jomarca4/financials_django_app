@@ -1,0 +1,12 @@
+{% extends 'financials/base.html' %}
+
+{% block content %}
+<h2>Posts in {{ section.title }}</h2>
+<ul>
+    {% for post in section.posts.all %}
+    <li>
+        <a href="{% url 'post_detail' post.id %}">{{ post.title }}</a>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}

@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'financials',
     'django_select2',
+    'ckeditor'
 
 ]
 

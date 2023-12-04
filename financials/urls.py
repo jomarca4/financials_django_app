@@ -2,6 +2,7 @@ from django.urls import path
 from django.contrib.auth.views import LoginView, LogoutView
 
 from .views import AssetHoldingCreateView,PortfolioListView, PortfolioDetailView, PortfolioCreateView, home,financial_ratios_view, income_statement_view,add_watched_stock, watched_stocks_list, edit_watched_stock,delete_watched_stock,delete_watched_stock
+from . import views
 
 urlpatterns = [
     path('income-statement/<str:ticker_symbol>/', income_statement_view, name='income-statement'),
@@ -19,6 +20,8 @@ urlpatterns = [
     path('portfolio/new/', PortfolioCreateView.as_view(), name='portfolio_new'),
     path('portfolio/<int:portfolio_id>/add-holding/', AssetHoldingCreateView.as_view(), name='add-holding'),
 
-
+    path('blog/', views.post_list, name='post_list'),
+    path('blog/post/<int:post_id>/', views.post_detail, name='post_detail'),
+    path('blog/section/<int:section_id>/', views.section_posts, name='section_posts'),
 
 ]
