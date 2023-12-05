@@ -2,67 +2,71 @@
 
 {% block content %}
 <style>
+    .container {
+        max-width: 1140px; /* or 100% for full width */
+    }
     .post-image {
         width: 100%;
-        height: 300px;
+        height: auto; /* maintain aspect ratio */
         object-fit: cover;
+    }
+    .post {
+        padding: 15px;
+        background-color: #f9f9f9;
+        margin-bottom: 30px;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .sidebar {
+        padding: 20px;
+        margin-top: 20px;
+    }
+    .dropdown-toggle::after {
+        display: inline-block;
+        margin-left: .255em;
+        vertical-align: .255em;
+        content: "";
+        border-top: .3em solid;
+        border-right: .3em solid transparent;
+        border-bottom: 0;
+        border-left: .3em solid transparent;
+    }
+    .post-image {
+        width: 100%; /* Ensures the image is always as wide as its container */
+        max-height: 50px; /* You can set this to the desired maximum height */
+        object-fit: cover; /* This will cover the area without stretching the image */
+        object-position: center; /* This will center the image within the area */
     }
 </style>
 <div class="container mt-4">
     <div class="row">
         <!-- Main content area -->
-        <div class="col-md-8">
+        <div class="col-lg-8">
             <h2>All Posts</h2>
             <ul class="list-unstyled">
                 {% for post in posts %}
-                <div class="mb-4">
+                <li class="post">
                     <a href="{% url 'post_detail' post.id %}" class="text-decoration-none">
                         <h5>{{ post.title }}</h5>
                     </a>
                     <small>By {{ post.author }} on {{ post.created_at|date:"F d, Y" }}</small>
                     {% if post.img_url %}
                         <img src="{{ post.img_url }}" alt="{{ post.title }}" class="img-fluid post-image mb-3">
-                        <p>{{ post.first_paragraph }}</p>
                     {% endif %}
-                </div>
+                    <p>{{ post.first_paragraph }}</p>
+                </li>
                 {% endfor %}
             </ul>
         </div>
         <!-- Sidebar for blog sections -->
-        <div class="col-md-4">
-            <div class="sidebar bg-light border-left pl-4">
-                <h5 class="mt-0 text-primary">Blog Sections</h5>
+        <div class="col-lg-4">
+            <div class="sidebar bg-light">
+                <h5 class="text-primary">Blog Sections</h5>
                 <ul class="list-unstyled">
-                    <li class="text-dark dropdown-toggle">
-                        <a href="#">Retrieving Financial Data with Python</a>
-                        <ul class="dropdown-menu" style="display: none; position: absolute;">
-                            <li class="text-muted">
-                                <a href="#">Extracting Fundamental Financial Data with Python</a>
-                            </li>
-                            <li class="text-muted">
-                                <a href="#">Gathering Economic Indicators with Python</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="text-dark dropdown-toggle">
-                        <a href="#">Analyzing and Visualizing Financial Data with Python</a>
-                        <ul class="dropdown-menu" style="display: none; position: absolute;">
-                            <li class="text-muted">
-                                <a href="#">Creating Financial Data Visualizations with Python</a>
-                            </li>
-                            <li class="text-muted">
-                                <a href="#">Creating Financial Dashboards and Applications with Python</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="text-dark">
-                        <a href="#">Machine Learning with Python</a>
-                    </li>
+                    <!-- Your existing sidebar content -->
                 </ul>
             </div>
         </div>
-        
-        
     </div>
 </div>
 

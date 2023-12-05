@@ -14,12 +14,22 @@
     {% endif %}
 
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- Ensure this line is present -->
+
     <title>{% block title %}Financials{% endblock title %}</title>
 
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    {% block extra_css %}{% endblock extra_css %}
-    
+    {% block extra_css %}
+    <style>
+    @media only screen and (max-width: 768px) {
+        .post-content { font-size: 16px; }
+        h2 { font-size: 20px; }
+        /* Add more responsive styles as needed */
+    }
+    </style>
+    {% endblock extra_css %}
+
 </head>
 <body>
     <!-- Bootstrap Navbar -->
