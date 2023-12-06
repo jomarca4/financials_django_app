@@ -297,3 +297,6 @@ def post_detail(request, post_id):
 def section_posts(request, section_id):
     section = get_object_or_404(Section, pk=section_id)
     return render(request, 'financials/section_posts.html', {'section': section})
+
+def about(request):
+    return render(request, 'financials/about.html')

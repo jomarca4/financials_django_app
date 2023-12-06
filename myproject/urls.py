@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include,path
 from django.views.generic import RedirectView
+from financials.views import about
 
 
 urlpatterns = [
@@ -23,6 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('financials/', include('financials.urls')),  # Adjust the path as needed
     path('select2/', include('django_select2.urls')),
+    path('about/', about, name='about'),
 
 
 
