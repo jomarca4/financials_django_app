@@ -1,13 +1,15 @@
 {% extends 'financials/base.html' %}
 
 {% block content %}
-<h2>Portfolios</h2>
-<ul class="list-group">
+<h2 style="margin-left: 10px; margin-top: 10px;">Portfolios</h2>
+<ul class="list-group" style="margin: 10px;">
     {% for portfolio in object_list %}
-        <li class="list-group-item"><a href="{% url 'portfolio_detail' portfolio.id %}">{{ portfolio.name }}</a></li>
+        <li class="list-group-item" style="margin-bottom: 5px;">
+            <a href="{% url 'portfolio_detail' portfolio.id %}">{{ portfolio.name }}</a>
+        </li>
     {% empty %}
         <li class="list-group-item">No portfolios available.</li>
     {% endfor %}
 </ul>
-<a href="{% url 'portfolio_new' %}" class="btn btn-primary mt-3">Add New Portfolio</a>
+<a href="{% url 'portfolio_new' %}" class="btn btn-primary mt-3" style="margin-left: 10px;">Add New Portfolio</a>
 {% endblock %}
