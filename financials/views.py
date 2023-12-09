@@ -305,6 +305,7 @@ def section_posts(request, section_id):
 def about(request):
     return render(request, 'financials/about.html')
 
+@login_required
 def earnings_estimates_view(request):
     ticker = request.GET.get('ticker', '')  # Get the ticker symbol from the GET request
     estimates = []
