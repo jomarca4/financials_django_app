@@ -28,7 +28,7 @@ qas_db_password = os.environ.get('QAS_DB_PASSWORD')
 qas_db_host = os.environ.get('QAS_DB_HOST')
 financials_PRD_secret_key = os.environ.get('Secret_Key')
 GOOGLE_ANALYTICS_ID = os.getenv('GOOGLE_ANALYTICS_ID')
-
+FMP_KEY  = os.environ.get('FMP_KEY')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -66,7 +66,7 @@ INSTALLED_APPS = [
     'django_select2',
     'ckeditor',
     'google_analytics',
-
+  'django.contrib.humanize',
 
 ]
 

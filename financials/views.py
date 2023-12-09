@@ -19,7 +19,11 @@ from django.db.models import Sum, F, Value
 from django.db.models.functions import Coalesce
 from decimal import Decimal
 from django.db.models import Sum
-from datetime import datetime               
+from datetime import datetime       
+from django.conf import settings 
+import requests       
+from datetime import datetime
+
 
 def home(request):
     # You can add any context data you want to pass to the template here
@@ -300,3 +304,23 @@ def section_posts(request, section_id):
 
 def about(request):
     return render(request, 'financials/about.html')
+
+def earnings_estimates_view(request):
+    ticker = request.GET.get('ticker', '')  # Get the ticker symbol from the GET request
+    estimates = []
+    if ticker:
+        try:
+            url = f"https://financialmodelingprep.com/api/v3/analyst-estimates/{ticker}?apikey={settings.FMP_KEY}"
+            response = requests.get(url)
+            response.raise_for_status()  # This will raise an exception for HTTP errors
+            all_estimates = response.json()
+            # Filter out past dates
+            current_date = datetime.now().date()
+            estimates = [estimate for estimate in all_estimates if datetime.strptime(estimate['date'], "%Y-%m-%d").date() > current_date]
+            #print(estimates)
+        except requests.exceptions.RequestException as e:
+            estimates = None
+            print(e)  # Handle logging appropriately in your project
+
+    return render(request, 'financials/earnings_estimates.html', {'estimates': estimates, 'ticker': ticker})
+

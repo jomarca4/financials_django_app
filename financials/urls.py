@@ -23,5 +23,6 @@ urlpatterns = [
     path('blog/', views.post_list, name='post_list'),
     path('blog/post/<slug:slug>/', views.post_detail, name='post_detail'),
     path('blog/section/<int:section_id>/', views.section_posts, name='section_posts'),
+    path('earnings-estimates/', views.earnings_estimates_view, name='earnings-estimates'),
 
 ]

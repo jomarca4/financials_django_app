@@ -1,0 +1,44 @@
+{% extends "financials/base.html" %}
+{% load humanize %}
+
+{% block content %}
+  <div class="container mt-5">
+    <h2 class="mb-4">Earnings Estimates for {{ ticker }}</h2>
+        <!-- Form to enter ticker -->
+        <form action="{% url 'earnings-estimates' %}" method="get" class="mb-4">
+            <div class="form-group">
+              <label for="ticker">Enter Stock Ticker:</label>
+              <input type="text" class="form-control" id="ticker" name="ticker" placeholder="e.g., AAPL" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Get Estimates</button>
+          </form>
+
+
+    {% if estimates %}
+      <table class="table table-bordered table-hover">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">Date</th>
+            <th scope="col">Revenue Avg</th>
+            <th scope="col">Net Income Avg</th>
+            <th scope="col">EPS Avg</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for estimate in estimates %}
+          <tr>
+            <th scope="row">{{ estimate.date }}</th>
+            <td>${{ estimate.estimatedRevenueAvg|floatformat:2|intcomma }}</td>
+            <td>${{ estimate.estimatedNetIncomeAvg|floatformat:2|intcomma }}</td>
+            <td>${{ estimate.estimatedEpsAvg|floatformat:2|intcomma }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <div class="alert alert-warning" role="alert">
+        Could not retrieve earnings estimates at this time.
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}
