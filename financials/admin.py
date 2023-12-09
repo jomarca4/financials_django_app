@@ -20,7 +20,7 @@ class PostAdmin(admin.ModelAdmin):
     date_hierarchy = 'created_at'
     ordering = ('-created_at',)
     # Updated fields attribute
-    fields = ['title', 'author', 'first_paragraph', 'img_url', 'content', 'section']
+    fields = ['title', 'author', 'first_paragraph', 'img_url', 'content', 'section', 'slug']
     # Exclude auto-generated fields from the form
     readonly_fields = ['created_at', 'updated_at']
 

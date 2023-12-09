@@ -290,8 +290,8 @@ def post_list(request):
     posts = Post.objects.all()
     return render(request, 'financials/post_list.html', {'posts': posts})
 
-def post_detail(request, post_id):
-    post = get_object_or_404(Post, pk=post_id)
+def post_detail(request, slug):
+    post = get_object_or_404(Post, slug=slug)    
     return render(request, 'financials/post_detail.html', {'post': post})
 
 def section_posts(request, section_id):

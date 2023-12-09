@@ -21,7 +21,7 @@ urlpatterns = [
     path('portfolio/<int:portfolio_id>/add-holding/', AssetHoldingCreateView.as_view(), name='add-holding'),
 
     path('blog/', views.post_list, name='post_list'),
-    path('blog/post/<int:post_id>/', views.post_detail, name='post_detail'),
+    path('blog/post/<slug:slug>/', views.post_detail, name='post_detail'),
     path('blog/section/<int:section_id>/', views.section_posts, name='section_posts'),
 
 ]
