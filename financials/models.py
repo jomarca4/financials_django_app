@@ -174,7 +174,8 @@ class Post(models.Model):
     tags = models.ManyToManyField(Tag, related_name='posts')
     first_paragraph = models.TextField(help_text="Enter the first paragraph of the post", default="Default text")
     img_url = models.URLField(max_length=1024, blank=True, null=True, help_text="URL of the image hosted on a third-party service")
-    slug = models.SlugField(max_length=200, unique=True, default='temp-slug')
+    slug = models.SlugField(max_length=200, unique=True)
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.title)
