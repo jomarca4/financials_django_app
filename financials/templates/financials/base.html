@@ -60,9 +60,12 @@
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'post_list' %}">Blog</a>
             </li>
+            {% if not user.is_authenticated %}
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'earnings-estimates' %}">Estimates</a>
             </li>
+            {% endif %}
+
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'watched_stocks_list' %}">Watched Stocks List</a>
