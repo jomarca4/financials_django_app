@@ -1,6 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    {% if GOOGLE_ANALYTICS_ID %}
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=GOOGLE_ANALYTICS_ID"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'GOOGLE_ANALYTICS_ID');
+</script>
+
+    {% endif %}
 
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.1/cookieconsent.min.css" />
@@ -116,62 +128,7 @@
 
 <!-- Cookie consent and conditional Google Analytics loading -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.1/cookieconsent.min.js"></script>
-<!-- Cookie consent and conditional Google Analytics loading -->
-<script>
-    window.addEventListener("load", function() {
-        window.cookieconsent.initialise({
-            "palette": {
-                "popup": {
-                    "background": "#efefef",
-                    "text": "#404040"
-                },
-                "button": {
-                    "background": "#8ec760",
-                    "text": "#ffffff"
-                }
-            },
-            "theme": "classic",
-            "content": {
-                "message": "This website uses cookies to enhance your experience and analyze our traffic.",
-                "dismiss": "Accept",
-                "deny": "Decline",
-                "link": "Learn more",
-                "href": "https://pythonandfinancehub.com/about/"  // Link to your privacy policy page
-            },
-            onInitialise: function(status) {
-                if (this.hasConsented()) {
-                    loadGoogleAnalytics();
-                }
-            },
-            onStatusChange: function(status) {
-                if (this.hasConsented()) {
-                    loadGoogleAnalytics();
-                } else {
-                    window['ga-disable-G-XWVZ7G8B84'] = true; // Disable GA if declined
-                }
-            },
-            onRevokeChoice: function() {
-                window['ga-disable-G-XWVZ7G8B84'] = true; // Disable GA
-            },
-            "type": "opt-in",
-            "law": {
-                "regionalLaw": false,
-            },
-            "location": true,
-        });
-    });
 
-    function loadGoogleAnalytics() {
-        // Load the Google Analytics script
-        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-        ga('create', 'G-XWVZ7G8B84', 'auto');
-        ga('send', 'pageview');
-    }
-</script>
 
    
     <!-- Bootstrap JS, Popper.js, and jQuery -->
