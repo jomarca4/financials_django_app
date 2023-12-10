@@ -91,6 +91,23 @@ def add_watched_stock(request):
 @login_required
 def watched_stocks_list(request):
     watched_stocks = WatchedStock.objects.filter(user=request.user)  # Fetch watched stocks for the logged-in user
+    # Your Financial Modeling Prep API Key
+    for stock in watched_stocks:
+        # API endpoint to get the current stock price
+         # Accessing the ticker symbol from the related Company model
+        ticker_symbol = stock.company.ticker_symbol
+        #print(ticker_symbol)
+        url = f'https://financialmodelingprep.com/api/v3/quote/{ticker_symbol}?apikey={settings.FMP_KEY}'
+        response = requests.get(url)
+        if response.status_code == 200:
+            data = response.json()
+            if data:
+                # Assuming the response contains a list and we need the first item
+                current_price = data[0].get('price')
+                stock.current_price = current_price  # Add the current price to the stock object
+            else:
+                stock.current_price = None  # Handle the case where no data is returned
+
     return render(request, 'financials/watched_stocks_list.html', {'watched_stocks': watched_stocks})
 
 def edit_watched_stock(request, pk):
