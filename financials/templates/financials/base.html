@@ -2,17 +2,47 @@
 <html lang="en">
 <head>
     {% if GOOGLE_ANALYTICS_ID %}
-    <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id={{GOOGLE_ANALYTICS_ID}}"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <!-- Cookie Consent Modal -->
+    <div id="cookieConsentModal" style="display: none; position: fixed; bottom: 0; width: 100%; background-color: white; padding: 10px; text-align: center;">
+        <p>This website uses cookies to ensure you get the best experience on our website. <a href="/financials/about.html">Learn More</a></p>
+        <button onclick="acceptCookies()">Accept</button>
+        <button onclick="declineCookies()">Decline</button>
+    </div>
 
-  gtag('config', '{{GOOGLE_ANALYTICS_ID}}');
-</script>
+    <!-- Google Analytics Script -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ GOOGLE_ANALYTICS_ID }}"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
 
-    {% endif %}
+        function initializeGoogleAnalytics() {
+            gtag('js', new Date());
+            gtag('config', '{{ GOOGLE_ANALYTICS_ID }}');
+        }
+
+        // Cookie consent functions
+        function acceptCookies() {
+            localStorage.setItem('cookieConsent', 'true');
+            document.getElementById('cookieConsentModal').style.display = 'none';
+            initializeGoogleAnalytics();
+        }
+
+        function declineCookies() {
+            localStorage.setItem('cookieConsent', 'false');
+            document.getElementById('cookieConsentModal').style.display = 'none';
+        }
+
+        // Check for existing cookie consent
+        window.addEventListener("load", function() {
+            var consent = localStorage.getItem('cookieConsent');
+            if (consent === 'true') {
+                initializeGoogleAnalytics();
+            } else if (consent !== 'false') {
+                document.getElementById('cookieConsentModal').style.display = 'block';
+            }
+        });
+    </script>
+{% endif %}
 
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.1/cookieconsent.min.css" />
