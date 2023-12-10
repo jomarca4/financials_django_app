@@ -116,6 +116,7 @@
 
 <!-- Cookie consent and conditional Google Analytics loading -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.1/cookieconsent.min.js"></script>
+<!-- Cookie consent and conditional Google Analytics loading -->
 <script>
     window.addEventListener("load", function() {
         window.cookieconsent.initialise({
@@ -131,8 +132,9 @@
             },
             "theme": "classic",
             "content": {
-                "message": "This website uses cookies to ensure you get the best experience on our website.",
-                "dismiss": "Allow cookies",
+                "message": "This website uses cookies to enhance your experience and analyze our traffic.",
+                "dismiss": "Accept",
+                "deny": "Decline",
                 "link": "Learn more",
                 "href": "https://pythonandfinancehub.com/about/"  // Link to your privacy policy page
             },
@@ -144,6 +146,8 @@
             onStatusChange: function(status) {
                 if (this.hasConsented()) {
                     loadGoogleAnalytics();
+                } else {
+                    window['ga-disable-G-XWVZ7G8B84'] = true; // Disable GA if declined
                 }
             },
             onRevokeChoice: function() {
