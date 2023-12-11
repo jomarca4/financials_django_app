@@ -8,7 +8,8 @@ from django.urls import reverse_lazy
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseForbidden
-
+from django.core.cache import cache
+import time
 from collections import defaultdict
 from itertools import groupby
 from operator import attrgetter
@@ -181,65 +182,60 @@ class PortfolioDetailView(LoginRequiredMixin, DetailView):
     model = Portfolio
     template_name = 'financials/portfolio_detail.html'
 
+    def get_current_price_from_api(self, ticker_symbol):
+        cache_key = f'current_price_{ticker_symbol}'
+        cached_price = cache.get(cache_key)
+
+        if not cached_price:
+            response = requests.get(f'https://financialmodelingprep.com/api/v3/profile/{ticker_symbol}?apikey={settings.FMP_KEY}')  # Replace with actual API URL
+            if response.status_code == 200:
+                current_price = response.json()[0]['price']
+                print(current_price)  # Adjust according to API response
+                cache.set(cache_key, current_price, 24 * 60 * 60)  # Cache for 24 hours
+                return Decimal(current_price)
+            else:
+                return Decimal('0.0')  # Default value in case of API failure
+        else:
+            return Decimal(cached_price)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         portfolio = self.object
+        asset_holdings = portfolio.assetholding_set.all()  # Assuming a related_name 'assetholdings'
 
-        asset_holdings = AssetHolding.objects.filter(portfolio=portfolio)
-
-        # First, get the most recent date for each asset holding's market data
-        recent_dates = market_data.objects.filter(
-            assetholding__portfolio=portfolio
-        ).values('assetholding').annotate(
-            recent_date=Max('date')
-        ).values_list('assetholding', 'recent_date')
-
-        # Create a dict mapping each holding to its most recent date
-        recent_date_map = {holding_id: date for holding_id, date in recent_dates}
-
-        # Initialize variables
         total_stocks = 0
         market_value = Decimal('0.0')
         total_purchase_price = Decimal('0.0')
         current_year = datetime.now().year
-
-        start_of_year = datetime(current_year, 1, 1)
-        asset_holdings_with_details = []  # List to hold details for each holding
+        asset_holdings_with_details = []
 
         for holding in asset_holdings:
-            recent_date = recent_date_map.get(holding.pk)
-                     # Get the most recent market data for this holding
-            recent_market_data = market_data.objects.filter(
-                assetholding=holding
-            ).order_by('-date').first()
-            recent_close = recent_market_data.close_price if recent_market_data else Decimal('0.0')
+            #print(holding.companies.ticker_symbol)
+            company_ticker = holding.market_data.company.ticker_symbol
+            recent_close = self.get_current_price_from_api(company_ticker)
 
             # Calculate YTD dividend amount
             ytd_dividends = market_data.objects.filter(
-                company_id  =recent_market_data.company.id, 
+                company_id=holding.market_data.company.id, 
                 date__year=current_year
             ).aggregate(Sum('dividend_amount'))['dividend_amount__sum'] or Decimal('0.0')
-            ytd_dividend_yield = (ytd_dividends / recent_close)*100
+            ytd_dividend_yield = (ytd_dividends / recent_close) * 100 if recent_close else Decimal('0.0')
 
             holding_market_value = recent_close * Decimal(holding.quantity)
             holding_purchase_price = Decimal(holding.purchase_price) * Decimal(holding.quantity)
             holding_gain = holding_market_value - holding_purchase_price
 
-            total_stocks += holding.quantity
-            market_value += holding_market_value
-            total_purchase_price += holding_purchase_price
-
-
-      # YTD Market Gain calculations
+            # YTD Market Gain calculations
             start_of_year_data = market_data.objects.filter(
-                company_id  =recent_market_data.company.id, 
-                date__gte=start_of_year
+                company_id=holding.market_data.company.id, 
+                date__gte=datetime(current_year, 1, 1)
             ).order_by('date').first()
             start_of_year_price = start_of_year_data.close_price if start_of_year_data else Decimal('0.0')
             ytd_market_gain = (recent_close - start_of_year_price) * Decimal(holding.quantity)
-            ytd_percentage_gain = (recent_close - start_of_year_price)/start_of_year_price
+            ytd_percentage_gain = ((recent_close - start_of_year_price) / start_of_year_price) * 100 if start_of_year_price else Decimal('0.0')
+
             # Add stock name and gain to the details for each holding
-            stock_name = recent_market_data.company.name if recent_market_data and recent_market_data.company else "Unknown"
+            stock_name = holding.market_data.company.name if holding.market_data.company.name and holding.market_data.company else "Unknown"
             asset_holdings_with_details.append({
                 'holding': holding,
                 'recent_close': recent_close,
@@ -247,13 +243,16 @@ class PortfolioDetailView(LoginRequiredMixin, DetailView):
                 'holding_gain': holding_gain,
                 'ytd_dividends': ytd_dividends,
                 'ytd_market_gain': ytd_market_gain,
-                'ytd_dividend_yield':ytd_dividend_yield,
-                'ytd_percentage_gain':ytd_percentage_gain
-
+                'ytd_dividend_yield': ytd_dividend_yield,
+                'ytd_percentage_gain': ytd_percentage_gain
             })
 
+            total_stocks += holding.quantity
+            market_value += holding_market_value
+            total_purchase_price += holding_purchase_price
+
         gain_loss = market_value - total_purchase_price
-        percentage_gain_loss = (gain_loss / total_purchase_price) * 100 if total_purchase_price else 0
+        percentage_gain_loss = (gain_loss / total_purchase_price) * 100 if total_purchase_price else Decimal('0.0')
 
         context.update({
             'total_stocks': total_stocks,
@@ -304,6 +303,7 @@ class AssetHoldingCreateView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self):
         return reverse_lazy('portfolio_detail', kwargs={'pk': self.portfolio.pk})
+
 
 
 #BLOG

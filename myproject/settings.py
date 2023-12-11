@@ -175,6 +175,13 @@ STATIC_URL = '/static/'
 
 STATIC_ROOT = '/var/www/myproject/static/'
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',  # Can be any unique name
+        'TIMEOUT': 24 * 60 * 60,  # 24 hours
+    }
+}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

@@ -12,6 +12,7 @@ class WatchedStockForm(forms.ModelForm):
 
 
 #to add assets to a portfolio
+#to add assets to a portfolio
 class AssetHoldingForm(forms.ModelForm):
     ticker_symbol = forms.CharField(max_length=10)  # Adjust max_length as needed
 
