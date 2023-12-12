@@ -35,6 +35,6 @@ urlpatterns = [
     path('blog/post/<slug:slug>/', views.post_detail, name='post_detail'),
     path('blog/section/<int:section_id>/', views.section_posts, name='section_posts'),
     path('earnings-estimates/', views.earnings_estimates_view, name='earnings-estimates'),
-    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap')
+    path('blog/sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
 
 ]
