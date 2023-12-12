@@ -51,7 +51,9 @@
                             %{{ holding_info.ytd_percentage_gain|floatformat:2 }}
                         </span>
                         </p>
-
+                        <!-- Edit link/button -->
+                        <a href="{% url 'edit_holding' pk=holding_info.holding.id %}" class="btn btn-primary">Edit</a>
+                        <a href="{% url 'delete_holding' pk=holding_info.holding.id %}" class="btn btn-danger">Delete</a>
 
                     </div>
                 </div>

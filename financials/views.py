@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.db import models  # Import models
 from django.db.models import Max, Subquery, OuterRef
 from django.views.generic import ListView, DetailView, CreateView
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView,UpdateView,DeleteView
 from django.urls import reverse_lazy
 
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -178,6 +178,10 @@ class PortfolioListView(LoginRequiredMixin,ListView):
     model = Portfolio
     template_name = 'financials/portfolio_list.html'
 
+    def get_queryset(self):
+        # Filter portfolios to show only those belonging to the current user
+        return Portfolio.objects.filter(user=self.request.user)
+
 class PortfolioDetailView(LoginRequiredMixin, DetailView):
     model = Portfolio
     template_name = 'financials/portfolio_detail.html'
@@ -268,12 +272,32 @@ class PortfolioCreateView(LoginRequiredMixin,CreateView):
     model = Portfolio
     fields = ['name', 'total_value']
     template_name = 'financials/portfolio_form.html'
-    success_url = 'financials/portfolios/'  # Redirect to portfolio list after creation
+    success_url = reverse_lazy('portfolio_list')  # Use the name of the URL pattern
 
     def form_valid(self, form):
         form.instance.user = self.request.user  # Assuming portfolios are user-specific
         return super().form_valid(form)
 
+class PortfolioDeleteView(LoginRequiredMixin, DeleteView):
+    model = Portfolio
+    template_name = 'financials/portfolio_confirm_delete.html'  # Confirmation template
+    success_url = reverse_lazy('portfolio_list')  # Redirect after delete
+
+
+
+class AssetHoldingUpdateView(LoginRequiredMixin, UpdateView):
+    model = AssetHolding
+    fields = ['quantity', 'purchase_price']  # specify the fields you want to be editable
+    template_name = 'financials/asset_holding_form.html'  # a form template for editing
+
+    def get_success_url(self):
+        # Redirect back to the portfolio detail page after editing
+        return reverse_lazy('portfolio_detail', kwargs={'pk': self.object.portfolio.pk})
+
+class AssetHoldingDeleteView(LoginRequiredMixin, DeleteView):
+    model = AssetHolding
+    template_name = 'financials/asset_holding_confirm_delete.html'  # Confirmation template
+    success_url = reverse_lazy('portfolio_list')  # Redirect after delete
 
 class AssetHoldingCreateView(LoginRequiredMixin, CreateView):
     model = AssetHolding

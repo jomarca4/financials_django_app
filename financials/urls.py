@@ -1,7 +1,7 @@
 from django.urls import path
 from django.contrib.auth.views import LoginView, LogoutView
 
-from .views import AssetHoldingCreateView,PortfolioListView, PortfolioDetailView, PortfolioCreateView, home,financial_ratios_view, income_statement_view,add_watched_stock, watched_stocks_list, edit_watched_stock,delete_watched_stock,delete_watched_stock
+from .views import PortfolioDeleteView,AssetHoldingDeleteView,AssetHoldingUpdateView, AssetHoldingCreateView,PortfolioListView, PortfolioDetailView, PortfolioCreateView, home,financial_ratios_view, income_statement_view,add_watched_stock, watched_stocks_list, edit_watched_stock,delete_watched_stock,delete_watched_stock
 from . import views
 
 urlpatterns = [
@@ -19,7 +19,10 @@ urlpatterns = [
     path('portfolio/<int:pk>/', PortfolioDetailView.as_view(), name='portfolio_detail'),
     path('portfolio/new/', PortfolioCreateView.as_view(), name='portfolio_new'),
     path('portfolio/<int:portfolio_id>/add-holding/', AssetHoldingCreateView.as_view(), name='add-holding'),
+    path('portfolio/delete/<int:pk>/', PortfolioDeleteView.as_view(), name='delete_portfolio'),
 
+    path('financials/holding/edit/<int:pk>/', AssetHoldingUpdateView.as_view(), name='edit_holding'),
+    path('financials/holding/delete/<int:pk>/', AssetHoldingDeleteView.as_view(), name='delete_holding'),
     path('blog/', views.post_list, name='post_list'),
     path('blog/post/<slug:slug>/', views.post_detail, name='post_detail'),
     path('blog/section/<int:section_id>/', views.section_posts, name='section_posts'),

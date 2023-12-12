@@ -1,0 +1,11 @@
+{% extends 'financials/base.html' %}  <!-- or your base template -->
+
+{% block content %}
+    <h1>Delete Asset Holding</h1>
+    <p>Are you sure you want to delete "{{ object }}"?</p>
+    <form method="post">
+        {% csrf_token %}
+        <input type="submit" value="Confirm">
+        <a href="{{ success_url }}">Cancel</a>
+    </form>
+{% endblock %}

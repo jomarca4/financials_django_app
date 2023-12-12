@@ -6,6 +6,8 @@
     {% for portfolio in object_list %}
         <li class="list-group-item" style="margin-bottom: 5px;">
             <a href="{% url 'portfolio_detail' portfolio.id %}">{{ portfolio.name }}</a>
+            <!-- Delete link/button -->
+            <a href="{% url 'delete_portfolio' portfolio.id %}" class="btn btn-danger" style="float: right;">Delete</a>
         </li>
     {% empty %}
         <li class="list-group-item">No portfolios available.</li>
