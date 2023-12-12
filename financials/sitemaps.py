@@ -6,7 +6,7 @@ class BlogSitemap(Sitemap):
     priority = 0.8          # Priority of this page in your website (0-1)
 
     def items(self):
-        return Post.objects.all()  # Queryset of your blog posts
+        return Post.objects.order_by('-created_at')  # Queryset of your blog posts
 
     def lastmod(self, obj):
         return obj.updated_at  # Replace 'modified' with your model's last modified date field
