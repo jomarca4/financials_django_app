@@ -67,6 +67,8 @@ INSTALLED_APPS = [
     'ckeditor',
     'google_analytics',
   'django.contrib.humanize',
+    'django.contrib.sitemaps',
+
 
 ]
 

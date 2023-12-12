@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from ckeditor.fields import RichTextField
 from django.utils.text import slugify
 from django.utils import timezone
+from django.urls import reverse
+
 # Create your models here.
 
 class companies(models.Model):
@@ -183,6 +185,9 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_absolute_url(self):
+        return reverse('post_detail', kwargs={'slug': self.slug})
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')

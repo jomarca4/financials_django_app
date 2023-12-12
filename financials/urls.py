@@ -4,6 +4,14 @@ from django.contrib.auth.views import LoginView, LogoutView
 from .views import PortfolioDeleteView,AssetHoldingDeleteView,AssetHoldingUpdateView, AssetHoldingCreateView,PortfolioListView, PortfolioDetailView, PortfolioCreateView, home,financial_ratios_view, income_statement_view,add_watched_stock, watched_stocks_list, edit_watched_stock,delete_watched_stock,delete_watched_stock
 from . import views
 
+from django.contrib.sitemaps.views import sitemap
+from .sitemaps import BlogSitemap
+
+sitemaps = {
+    'blog': BlogSitemap,
+}
+
+
 urlpatterns = [
     path('income-statement/<str:ticker_symbol>/', income_statement_view, name='income-statement'),
     path('add-watched-stock/', add_watched_stock, name='add_watched_stock'),
@@ -27,5 +35,6 @@ urlpatterns = [
     path('blog/post/<slug:slug>/', views.post_detail, name='post_detail'),
     path('blog/section/<int:section_id>/', views.section_posts, name='section_posts'),
     path('earnings-estimates/', views.earnings_estimates_view, name='earnings-estimates'),
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap')
 
 ]
