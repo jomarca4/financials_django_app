@@ -287,11 +287,49 @@ class AssetHoldingCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         # Get the ticker symbol from the form
         ticker_symbol = form.cleaned_data['ticker_symbol']
+ #       Fetch company data from API and handle API failure
+        response = requests.get(f'https://financialmodelingprep.com/api/v3/profile/{ticker_symbol}?apikey={settings.FMP_KEY}')
+        if response.status_code != 200:
+        # Handle API failure (e.g., return an error message or redirect)
+            pass
 
-        # Find or create the market_data entry
-        # Assuming 'companies' model has the 'ticker_symbol' field
-        company = companies.objects.get(ticker_symbol=ticker_symbol)
-        market_data_entry = market_data.objects.filter(company=company).latest('date')
+        company_data = response.json()[0]
+        # Get or create the company
+        #print(company_data['cik'])
+        if company_data['cik'] == None:
+            company_data['cik'] = 111
+            #print('cik')
+        if company_data['city'] == None:
+            company_data['city'] = 'Valencia'
+        company, created = companies.objects.get_or_create(
+            ticker_symbol=ticker_symbol,
+            defaults={
+                'name': company_data['companyName'],
+                'cik': company_data.get('cik'),
+                'location': company_data['city'],
+                'exchange': company_data['exchangeShortName'],
+                'industry': company_data['industry'],
+            }
+        )
+            # Fetch or create market data for the company
+        response_market_data = requests.get(f'https://financialmodelingprep.com/api/v3/quote/{ticker_symbol}?apikey={settings.FMP_KEY}')
+        if response_market_data.status_code != 200:
+            form.add_error(None, "Failed to fetch market data")
+            return self.form_invalid(form)
+
+        market_data_api = response_market_data.json()[0]
+        market_data_entry, md_created = market_data.objects.update_or_create(
+        company=company,
+        date=datetime.today(),
+        defaults={
+            'open_price': market_data_api['open'],
+            'close_price': market_data_api['price'],
+            'high_price': market_data_api['dayHigh'],
+            'low_price': market_data_api['dayLow'],
+            'volume': market_data_api['volume'],
+            'market_cap': market_data_api['marketCap'],
+            }
+            )
 
         # Create the AssetHolding instance
         asset_holding = form.save(commit=False)
