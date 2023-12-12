@@ -5,7 +5,7 @@ from django.db.models import Max, Subquery, OuterRef
 from django.views.generic import ListView, DetailView, CreateView
 from django.views.generic.edit import CreateView,UpdateView,DeleteView
 from django.urls import reverse_lazy
-
+import random
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseForbidden
 from django.core.cache import cache
@@ -321,8 +321,7 @@ class AssetHoldingCreateView(LoginRequiredMixin, CreateView):
         # Get or create the company
         #print(company_data['cik'])
         if company_data['cik'] == None:
-            company_data['cik'] = 111
-            #print('cik')
+            company_data['cik'] = random.randint(10**6, 10**7 - 1)            #print('cik')
         if company_data['city'] == None:
             company_data['city'] = 'Valencia'
         company, created = companies.objects.get_or_create(
