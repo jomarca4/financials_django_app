@@ -1,5 +1,9 @@
 {% extends 'financials/base.html' %}
 
+{% block meta_description %}
+<meta name="description" content="{{ post.first_paragraph|striptags|truncatechars:160 }}" />
+{% endblock %}
+
 {% block content %}
 <style>
     .post-header {

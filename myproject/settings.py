@@ -130,7 +130,7 @@ DATABASES = {
 
 # Set to True to use production database
 USE_PRODUCTION_DB = os.environ.get('USE_PRODUCTION_DB') 
-
+print(qas_db_password)
 if USE_PRODUCTION_DB:
     DATABASES['default'] = DATABASES['production']
 
