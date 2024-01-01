@@ -369,7 +369,7 @@ class AssetHoldingCreateView(LoginRequiredMixin, CreateView):
 
 #BLOG
 def post_list(request):
-    posts = Post.objects.all()
+    posts = Post.objects.all().order_by('-created_at')
     return render(request, 'financials/post_list.html', {'posts': posts})
 
 def post_detail(request, slug):
