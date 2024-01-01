@@ -24,6 +24,7 @@ from datetime import datetime
 from django.conf import settings 
 import requests       
 from datetime import datetime
+from django.core.paginator import Paginator
 
 
 def home(request):
@@ -369,7 +370,12 @@ class AssetHoldingCreateView(LoginRequiredMixin, CreateView):
 
 #BLOG
 def post_list(request):
-    posts = Post.objects.all().order_by('-created_at')
+    posts_list = Post.objects.all().order_by('-created_at')
+    paginator = Paginator(posts_list, 10)  # Show 10 posts per page
+
+    page_number = request.GET.get('page')
+    posts = paginator.get_page(page_number)
+
     return render(request, 'financials/post_list.html', {'posts': posts})
 
 def post_detail(request, slug):
