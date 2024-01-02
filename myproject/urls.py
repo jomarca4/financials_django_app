@@ -17,7 +17,8 @@ from django.contrib import admin
 from django.urls import include,path
 from django.views.generic import RedirectView
 from financials.views import about
-
+from django.conf.urls import handler404, handler500
+from financials import views
 
 urlpatterns = [
     path('', RedirectView.as_view(url='financials/blog/'), name='home'),  # Redirect root to blog
@@ -29,3 +30,7 @@ urlpatterns = [
 
 
 ]
+
+# Custom error handlers
+handler404 = 'financials.views.custom_404'
+handler500 = 'financials.views.custom_500'

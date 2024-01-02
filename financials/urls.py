@@ -39,6 +39,3 @@ urlpatterns = [
 
 ]
 
-# Custom error handlers
-handler404 = 'financials.views.custom_404'
-handler500 = 'financials.views.custom_500'
