@@ -3,6 +3,8 @@ from django.contrib.auth.views import LoginView, LogoutView
 
 from .views import PortfolioDeleteView,AssetHoldingDeleteView,AssetHoldingUpdateView, AssetHoldingCreateView,PortfolioListView, PortfolioDetailView, PortfolioCreateView, home,financial_ratios_view, income_statement_view,add_watched_stock, watched_stocks_list, edit_watched_stock,delete_watched_stock,delete_watched_stock
 from . import views
+from django.conf.urls import handler404, handler500
+
 
 from django.contrib.sitemaps.views import sitemap
 from .sitemaps import BlogSitemap
@@ -38,3 +40,7 @@ urlpatterns = [
     path('blog/sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
 
 ]
+
+# Custom error handlers
+handler404 = 'financials.views.custom_404'
+handler500 = 'financials.views.custom_500'

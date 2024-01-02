@@ -25,6 +25,7 @@ from django.conf import settings
 import requests       
 from datetime import datetime
 from django.core.paginator import Paginator
+from django.http import HttpResponseRedirect
 
 
 def home(request):
@@ -412,3 +413,10 @@ def earnings_estimates_view(request):
 
     return render(request, 'financials/earnings_estimates.html', {'estimates': estimates, 'ticker': ticker})
 
+# Define the view for handling 404 errors
+def custom_404(request, exception):
+    return HttpResponseRedirect('https://pythonandfinancehub.com/financials/blog/')
+
+# Define the view for handling 500 errors
+def custom_500(request):
+    return HttpResponseRedirect('https://pythonandfinancehub.com/financials/blog/')
