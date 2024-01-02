@@ -6,6 +6,16 @@
 
 {% block content %}
 <style>
+    .related-posts {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+    }
+    .related-post-card {
+        margin-bottom: 1rem;
+    }
+    .related-post-title {
+        font-size: 1.2rem;
+    }
     .post-header {
         border-bottom: 1px solid #eee;
         margin-bottom: 2rem;
@@ -62,6 +72,30 @@
                     <!-- Placeholder for future comment section -->
                 </footer>
             </article>
+        </div>
+    </div>
+     <!-- Related Posts Section -->
+     <div class="related-posts">
+        <h3 class="mb-4">Related Posts</h3>
+        <div class="row">
+            {% for related_post in related_posts %}
+                <div class="col-md-4 related-post-card">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title related-post-title">
+                                <a href="{{ related_post.get_absolute_url }}" class="stretched-link">
+                                    {{ related_post.title }}
+                                </a>
+                            </h5>
+                            <p class="card-text">{{ related_post.first_paragraph|truncatewords:20 }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col">
+                    <p>No related posts found.</p>
+                </div>
+            {% endfor %}
         </div>
     </div>
 </div>

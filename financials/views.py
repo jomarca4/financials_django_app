@@ -380,7 +380,10 @@ def post_list(request):
 
 def post_detail(request, slug):
     post = get_object_or_404(Post, slug=slug)    
-    return render(request, 'financials/post_detail.html', {'post': post})
+    # Fetch related posts based on shared tags, excluding the current post
+    related_posts = Post.objects.filter(tags__in=post.tags.all()).exclude(id=post.id).distinct()[:5]
+    # Pass both the post and related_posts to the template
+    return render(request, 'financials/post_detail.html', {'post': post, 'related_posts': related_posts})
 
 def section_posts(request, section_id):
     section = get_object_or_404(Section, pk=section_id)
