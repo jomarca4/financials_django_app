@@ -1,10 +1,8 @@
 from django.urls import path
 from django.contrib.auth.views import LoginView, LogoutView
 
-from .views import PortfolioDeleteView,AssetHoldingDeleteView,AssetHoldingUpdateView, AssetHoldingCreateView,PortfolioListView, PortfolioDetailView, PortfolioCreateView, home,financial_ratios_view, income_statement_view,add_watched_stock, watched_stocks_list, edit_watched_stock,delete_watched_stock,delete_watched_stock
+from .views import PortfolioDeleteView,AssetHoldingDeleteView,AssetHoldingUpdateView, AssetHoldingCreateView,PortfolioListView, PortfolioDetailView, PortfolioCreateView, home,financial_ratios_view, income_statement_view,add_watched_stock, watched_stocks_list, edit_watched_stock,delete_watched_stock,delete_watched_stock,custom_404, custom_500
 from . import views
-from django.conf.urls import handler404, handler500
-
 
 from django.contrib.sitemaps.views import sitemap
 from .sitemaps import BlogSitemap
