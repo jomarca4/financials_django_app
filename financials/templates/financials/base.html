@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta name="google-site-verification" content="41Yl3W3uBFWw6SYf2A4E0WkfPEvjZEa8l3d2IvFzkHo" />
     {% if GOOGLE_ANALYTICS_ID %}
     <!-- Cookie Consent Modal -->
     <div id="cookieConsentModal" style="display: none; position: fixed; left: 0; right: 0; bottom: 0; width: 100%; background-color: white; padding: 10px; text-align: center; z-index: 1000;">
@@ -8,9 +9,11 @@
         <button onclick="acceptCookies()">Accept</button>
         <button onclick="declineCookies()">Decline</button>
     </div>
+        <!-- Remove Google Analytics Script -->
+
     <!-- Google Analytics Script -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id={{ GOOGLE_ANALYTICS_ID }}"></script>
-    <script>
+    <!--<script async src="https://www.googletagmanager.com/gtag/js?id={{ GOOGLE_ANALYTICS_ID }}"></script>-->
+    <!-- <script>
         window.dataLayer = window.dataLayer || [];
         function gtag() { dataLayer.push(arguments); }
 
@@ -40,7 +43,7 @@
                 document.getElementById('cookieConsentModal').style.display = 'block';
             }
         });
-    </script>
+    </script>-->
 {% endif %}
 
 
